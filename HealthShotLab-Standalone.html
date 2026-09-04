@@ -123,13 +123,27 @@ button,input,select,textarea{font:inherit}.app-shell{display:grid;grid-template-
   <div id="toast" class="toast"></div>
   <script>
 const WIZARD_STEPS = ['Formula','Ingredients','Extraction / Yield','Blend','QC','Filling','Cost','Summary'];
-const state = { formulas: [], batches: [], shelfLife: [], wizardStep: 0, wizard: null, activeView: 'dashboard' };
+const state = { formulas: [], batches: [], shelfLife: [], wizardStep: 0, wizard: null, activeView: 'dashboard', formulaEditingId: null };
 const $ = (q) => document.querySelector(q);
 const $$ = (q) => [...document.querySelectorAll(q)];
 const money = n => `${Number(n || 0).toFixed(2)} ฿`;
 const num = (n, d=2) => Number(n || 0).toFixed(d);
 const measurement = value => { const n=value===''||value==null?null:Number(value); return Number.isFinite(n)?n:null; };
 const isMeasuredExtraction = entry => Number(entry?.raw_input_kg)>0 && String(entry?.juice_output_l??'').trim()!=='' && Number.isFinite(Number(entry.juice_output_l));
+function formulaIngredientsFromPercent(ingredients,targetVolume){
+  const volume=Number(targetVolume||0);
+  return (ingredients||[]).map(i=>{const percent=Number(i.percent||0);return {...i,target_qty:Number((volume*percent/100).toFixed(6)),percent};});
+}
+function formulaPercentagesFromQuantity(ingredients){
+  const rows=(ingredients||[]).map(i=>({...i,target_qty:Number(i.target_qty||0)}));
+  const total=rows.reduce((sum,i)=>sum+(Number.isFinite(i.target_qty)&&i.target_qty>0?i.target_qty:0),0);
+  return rows.map(i=>({...i,percent:total>0?Number((Math.max(0,i.target_qty)/total*100).toFixed(6)):0}));
+}
+function formulaPayload(body){
+  const ingredients=(body.ingredients||[]).map(i=>({name:String(i.name||'').trim(),target_qty:Number(i.target_qty||0),unit:String(i.unit||'').trim(),percent:Number(i.percent||0)})).filter(i=>i.name);
+  if(!body.name||!body.version||Number(body.target_volume_l)<=0||!ingredients.length) throw new Error('กรอกข้อมูลสูตรให้ครบ');
+  return {name:String(body.name).trim(),version:String(body.version).trim(),target_volume_l:Number(body.target_volume_l),ingredients};
+}
 
 const PORTABLE_KEY = 'healthshot-lab-data-v1';
 function portableToday(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
@@ -182,9 +196,9 @@ async function api(path, options={}) {
   if(method==='GET' && path==='/api/dashboard') return portableDashboard(db);
   if(method==='GET' && path==='/api/formulas') return [...db.formulas].sort((a,b)=>b.id-a.id);
   if(method==='POST' && path==='/api/formulas'){
-    if(!body.name||!body.version||Number(body.target_volume_l)<=0||!body.ingredients?.length) throw new Error('กรอกข้อมูลสูตรให้ครบ');
-    const id=db.nextFormulaId++; db.formulas.push({id,name:String(body.name),version:String(body.version),target_volume_l:Number(body.target_volume_l),status:'active',created_at:portableNow(),ingredients:body.ingredients.map(i=>({...i,target_qty:Number(i.target_qty),percent:Number(i.percent||0)}))}); portableSave(db); return {id};
+    const payload=formulaPayload(body); const id=db.nextFormulaId++; db.formulas.push({id,...payload,status:'active',created_at:portableNow()}); portableSave(db); return {id};
   }
+  const fm=path.match(/^\/api\/formulas\/(\d+)$/); if(method==='PATCH'&&fm){const f=db.formulas.find(x=>x.id===Number(fm[1])); if(!f) throw new Error('formula not found'); Object.assign(f,formulaPayload(body)); portableSave(db); return {id:f.id,formula:f};}
   if(method==='GET' && path==='/api/batches') return db.batches.map(b=>portableBatchView(db,b)).sort((a,b)=>b.id-a.id);
   if(method==='POST' && path==='/api/batches'){
     if(!body.formula_id||Number(body.target_volume_l)<=0) throw new Error('กรุณาเลือกสูตรและขนาด Batch');
@@ -303,14 +317,26 @@ async function loadFormulas(){
   try{state.formulas=await api('/api/formulas'); renderFormulas();}catch(e){toast(e.message)}
 }
 function renderFormulas(){
-  $('#formulaList').innerHTML=state.formulas.map(f=>`<div class="formula-card"><div class="top"><div class="formula-icon">⚗</div><span class="pill good">${f.status}</span></div><h3>${f.name} ${f.version}</h3><div class="meta">Target ${f.target_volume_l} L • Created ${String(f.created_at).slice(0,10)}</div><div class="ingredient-list">${f.ingredients.map(i=>`<div class="ingredient"><span>${i.name}</span><span>${num(i.target_qty,2)} ${i.unit}</span><span>${num(i.percent,1)}%</span></div>`).join('')}</div></div>`).join('') || '<div class="empty">ยังไม่มีสูตร</div>';
+  $('#formulaList').innerHTML=state.formulas.map(f=>`<div class="formula-card"><div class="top"><div class="formula-icon">⚗</div><div style="display:flex;gap:6px;align-items:center"><span class="pill good">${escapeHtml(f.status)}</span><button class="btn ghost" onclick="editFormula(${f.id})">แก้ไข</button></div></div><h3>${escapeHtml(f.name)} ${escapeHtml(f.version)}</h3><div class="meta">Target ${f.target_volume_l} L • Created ${String(f.created_at).slice(0,10)}</div><div class="ingredient-list">${f.ingredients.map(i=>`<div class="ingredient"><span>${escapeHtml(i.name)}</span><span>${num(i.target_qty,2)} ${escapeHtml(i.unit)}</span><span>${num(i.percent,1)}%</span></div>`).join('')}</div></div>`).join('') || '<div class="empty">ยังไม่มีสูตร</div>';
 }
-function showFormulaEditor(){
-  const box=$('#formulaEditor'); box.classList.remove('hidden'); box.innerHTML=`<div class="panel-head"><div><span class="eyebrow">NEW FORMULA</span><h2>สร้างสูตรทดลอง</h2></div><button class="btn ghost" onclick="$('#formulaEditor').classList.add('hidden')">ปิด</button></div><div class="form-grid"><div class="field-group"><label>ชื่อสูตร</label><input id="fName" class="field" value="Ginger Experiment"></div><div class="field-group"><label>Version</label><input id="fVersion" class="field" value="v0.2"></div><div class="field-group"><label>Target Batch (L)</label><input id="fVolume" type="number" step="0.1" class="field" value="5"></div></div><div class="ingredient-editor"><b>Ingredients</b><div id="fIngredients"></div><button class="btn secondary" onclick="addFormulaIngredient()">+ Ingredient</button> <button class="btn primary" onclick="saveFormula()">Save Formula</button></div>`;
-  [['Apple juice',3.95,'L',79],['Ginger juice',.85,'L',17],['Lemon juice',.2,'L',4]].forEach(x=>addFormulaIngredient(...x));
+function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+function formulaEditorRows(){return $$('#fIngredients .ingredient-edit-row');}
+function formulaEditorValues(){return formulaEditorRows().map(r=>({name:r.querySelector('.fi-name').value.trim(),target_qty:Number(r.querySelector('.fi-qty').value||0),unit:r.querySelector('.fi-unit').value.trim(),percent:Number(r.querySelector('.fi-pct').value||0)}));}
+function renderFormulaTotals(){const el=$('#fFormulaTotals');if(!el)return;const rows=formulaEditorValues();const qty=rows.reduce((sum,row)=>sum+Math.max(0,row.target_qty),0);const pct=rows.reduce((sum,row)=>sum+Math.max(0,row.percent),0);el.className=`callout ${Math.abs(pct-100)<0.01?'success':'warn'}`;el.textContent=`รวม Qty ${num(qty,3)} • รวม ${num(pct,1)}%${Math.abs(pct-100)<0.01?'':' (ควรเท่ากับ 100%)'}`;}
+function recalculateFormulaQuantitiesFromPercent(){const rows=formulaEditorRows();const values=formulaIngredientsFromPercent(formulaEditorValues(),Number($('#fVolume')?.value||0));rows.forEach((row,index)=>{row.querySelector('.fi-qty').value=values[index].target_qty||'';});renderFormulaTotals();}
+function recalculateFormulaPercentagesFromQuantity(){const rows=formulaEditorRows();const values=formulaPercentagesFromQuantity(formulaEditorValues());rows.forEach((row,index)=>{row.querySelector('.fi-pct').value=values[index].percent||'';});renderFormulaTotals();}
+function bindFormulaIngredientRow(row){row.querySelector('.fi-pct')?.addEventListener('input',()=>{const volume=Number($('#fVolume')?.value||0),percent=Number(row.querySelector('.fi-pct').value||0);row.querySelector('.fi-qty').value=Number((volume*percent/100).toFixed(6))||'';renderFormulaTotals();});row.querySelector('.fi-qty')?.addEventListener('input',recalculateFormulaPercentagesFromQuantity);}
+function removeFormulaIngredient(button){button.parentElement.remove();recalculateFormulaPercentagesFromQuantity();}
+function showFormulaEditor(formula=null){
+  state.formulaEditingId=formula?Number(formula.id):null; const editing=Boolean(state.formulaEditingId); const box=$('#formulaEditor'); box.classList.remove('hidden');
+  box.innerHTML=`<div class="panel-head"><div><span class="eyebrow">${editing?'EDIT FORMULA':'NEW FORMULA'}</span><h2>${editing?'แก้ไขสูตร':'สร้างสูตรทดลอง'}</h2></div><button class="btn ghost" onclick="$('#formulaEditor').classList.add('hidden');state.formulaEditingId=null">ปิด</button></div><div class="form-grid"><div class="field-group"><label>ชื่อสูตร</label><input id="fName" class="field" value="${escapeHtml(formula?.name||'Ginger Experiment')}"></div><div class="field-group"><label>Version</label><input id="fVersion" class="field" value="${escapeHtml(formula?.version||'v0.2')}"></div><div class="field-group"><label>Target Batch (L)</label><input id="fVolume" type="number" step="0.1" min="0.1" class="field" value="${formula?.target_volume_l??5}"><span class="hint">เปลี่ยน Volume แล้ว Qty จะคำนวณจาก % ให้อัตโนมัติ</span></div></div><div class="ingredient-editor"><b>Ingredients</b><div id="fIngredients"></div><button class="btn secondary" onclick="addFormulaIngredient()">+ Ingredient</button> <button class="btn primary" onclick="saveFormula()">${editing?'บันทึกการแก้ไข':'Save Formula'}</button><div id="fFormulaTotals" class="callout success"></div></div>`;
+  const defaults=[['Apple juice',3.95,'L',79],['Ginger juice',.85,'L',17],['Lemon juice',.2,'L',4]];
+  (formula?.ingredients?.length?formula.ingredients:defaults).forEach(i=>addFormulaIngredient(i.name,i.target_qty,i.unit,i.percent)); bindFormulaEditorFields();
 }
-function addFormulaIngredient(name='',qty='',unit='L',pct=''){const row=document.createElement('div');row.className='ingredient-edit-row';row.innerHTML=`<input class="field fi-name" placeholder="Ingredient" value="${name}"><input class="field fi-qty" type="number" step="0.01" placeholder="Qty" value="${qty}"><input class="field fi-unit" value="${unit}"><input class="field fi-pct" type="number" step="0.1" placeholder="%" value="${pct}"><button class="btn danger" onclick="this.parentElement.remove()">×</button>`;$('#fIngredients').appendChild(row)}
-async function saveFormula(){try{const ingredients=$$('#fIngredients .ingredient-edit-row').map(r=>({name:r.querySelector('.fi-name').value,target_qty:Number(r.querySelector('.fi-qty').value),unit:r.querySelector('.fi-unit').value,percent:Number(r.querySelector('.fi-pct').value)})).filter(x=>x.name);await api('/api/formulas',{method:'POST',body:{name:$('#fName').value,version:$('#fVersion').value,target_volume_l:Number($('#fVolume').value),ingredients}});toast('บันทึกสูตรแล้ว');$('#formulaEditor').classList.add('hidden');loadFormulas();}catch(e){toast(e.message)}}
+function addFormulaIngredient(name='',qty='',unit='L',pct=''){const row=document.createElement('div');row.className='ingredient-edit-row';row.innerHTML=`<input class="field fi-name" placeholder="Ingredient" value="${escapeHtml(name)}"><input class="field fi-qty" type="number" step="0.01" placeholder="Qty" value="${qty}"><input class="field fi-unit" value="${escapeHtml(unit)}"><input class="field fi-pct" type="number" step="0.1" placeholder="%" value="${pct}"><button class="btn danger" onclick="removeFormulaIngredient(this)">×</button>`;$('#fIngredients').appendChild(row);bindFormulaIngredientRow(row);renderFormulaTotals();}
+function bindFormulaEditorFields(){$('#fVolume')?.addEventListener('input',recalculateFormulaQuantitiesFromPercent);renderFormulaTotals();}
+function editFormula(id){const formula=state.formulas.find(f=>Number(f.id)===Number(id));if(formula)showFormulaEditor(formula);}
+async function saveFormula(){try{const ingredients=formulaEditorValues().filter(x=>x.name);const percentTotal=ingredients.reduce((sum,row)=>sum+row.percent,0);if(!ingredients.length)throw new Error('ต้องมีอย่างน้อย 1 ingredient');if(Math.abs(percentTotal-100)>0.01)throw new Error('เปอร์เซ็นต์รวมต้องเท่ากับ 100%');const editingId=state.formulaEditingId;const path=editingId?`/api/formulas/${editingId}`:'/api/formulas';await api(path,{method:editingId?'PATCH':'POST',body:{name:$('#fName').value,version:$('#fVersion').value,target_volume_l:Number($('#fVolume').value),ingredients}});toast(editingId?'แก้ไขสูตรแล้ว':'บันทึกสูตรแล้ว');state.formulaEditingId=null;$('#formulaEditor').classList.add('hidden');loadFormulas();}catch(e){toast(e.message)}}
 
 async function loadBatches(){try{state.batches=await api('/api/batches');renderBatchTable(state.batches);}catch(e){toast(e.message)}}
 function renderBatchTable(rows){$('#batchTable').innerHTML=rows.length?`<table class="data-table"><thead><tr><th>Batch</th><th>Formula</th><th>Status</th><th>Volume</th><th>Yield</th><th>pH</th><th>Brix</th><th>Bottles</th><th>Reject</th><th>Cost/Bottle</th></tr></thead><tbody>${rows.map(b=>`<tr><td><b>${b.code}</b><br><small>${String(b.started_at).slice(0,16).replace('T',' ')}</small></td><td>${b.formula_name||'-'} ${b.formula_version||''}</td><td><span class="pill ${b.status==='completed'?'good':'pending'}">${b.status}</span></td><td>${num(b.actual_volume_l||b.target_volume_l,1)} L</td><td>${num(b.avg_yield,1)}%</td><td>${b.ph==null?'-':num(b.ph,2)}</td><td>${b.brix==null?'-':num(b.brix,1)}</td><td>${b.good_bottles||0}</td><td>${b.reject_bottles||0}</td><td>${money(b.cost_per_bottle)}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">ยังไม่มี Batch</div>'}

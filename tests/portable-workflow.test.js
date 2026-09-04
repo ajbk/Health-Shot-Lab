@@ -290,3 +290,57 @@ test('shelf-life returns complete labelled checkpoints for four completed batche
   assert.ok(checkpoints.every(checkpoint => checkpoint.batch_code && checkpoint.formula_name));
   assert.equal(new Set(checkpoints.map(checkpoint => checkpoint.batch_code)).size, 4);
 });
+
+test('editing a formula updates the existing record without creating a duplicate', async () => {
+  const app = loadPortableApp();
+
+  const updated = await app.api('/api/formulas/1', {
+    method: 'PATCH',
+    body: {
+      name: 'Ginger Basic Plus',
+      version: 'v0.2',
+      target_volume_l: 5,
+      ingredients: [
+        { name: 'Apple juice', target_qty: 3.5, unit: 'L', percent: 70 },
+        { name: 'Ginger juice', target_qty: 1, unit: 'L', percent: 20 },
+        { name: 'Lemon juice', target_qty: 0.5, unit: 'L', percent: 10 }
+      ]
+    }
+  });
+
+  assert.equal(updated.id, 1);
+  const formulas = serialise(await app.api('/api/formulas'));
+  assert.equal(formulas.length, 1);
+  assert.equal(formulas[0].name, 'Ginger Basic Plus');
+  assert.equal(formulas[0].version, 'v0.2');
+});
+
+test('formula percentages calculate ingredient quantities from target volume', () => {
+  const app = loadPortableApp();
+  const ingredients = vm.runInContext(`formulaIngredientsFromPercent([
+    { name: 'Apple juice', target_qty: 3.95, unit: 'L', percent: 79 },
+    { name: 'Ginger juice', target_qty: 0.85, unit: 'L', percent: 17 },
+    { name: 'Lemon juice', target_qty: 0.2, unit: 'L', percent: 4 }
+  ], 10)`, app);
+
+  assert.deepEqual(serialise(ingredients), [
+    { name: 'Apple juice', target_qty: 7.9, unit: 'L', percent: 79 },
+    { name: 'Ginger juice', target_qty: 1.7, unit: 'L', percent: 17 },
+    { name: 'Lemon juice', target_qty: 0.4, unit: 'L', percent: 4 }
+  ]);
+});
+
+test('formula quantities calculate percentages from edited quantities', () => {
+  const app = loadPortableApp();
+  const ingredients = vm.runInContext(`formulaPercentagesFromQuantity([
+    { name: 'Apple juice', target_qty: 3, unit: 'L', percent: 79 },
+    { name: 'Ginger juice', target_qty: 1, unit: 'L', percent: 17 },
+    { name: 'Lemon juice', target_qty: 1, unit: 'L', percent: 4 }
+  ])`, app);
+
+  assert.deepEqual(serialise(ingredients), [
+    { name: 'Apple juice', target_qty: 3, unit: 'L', percent: 60 },
+    { name: 'Ginger juice', target_qty: 1, unit: 'L', percent: 20 },
+    { name: 'Lemon juice', target_qty: 1, unit: 'L', percent: 20 }
+  ]);
+});
