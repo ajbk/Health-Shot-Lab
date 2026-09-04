@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Health Shot Lab</title>
+  <style>
+:root{
+  --bg:#f4f7f5; --surface:#fff; --ink:#14231b; --muted:#718078;
+  --line:#dfe7e2; --green:#166534; --green2:#22c55e; --greenSoft:#eaf7ef;
+  --nav:#101a16; --nav2:#17231e; --amber:#d97706; --amberSoft:#fff7e6;
+  --red:#c2413b; --redSoft:#fff0ee; --blue:#2563eb; --shadow:0 10px 28px rgba(20,35,27,.06);
+  --radius:16px;
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--ink)}
+button,input,select,textarea{font:inherit}.app-shell{display:grid;grid-template-columns:230px 1fr;min-height:100vh}.sidebar{background:linear-gradient(180deg,var(--nav),#0d1512);color:#e8f2ec;padding:18px 14px;display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;width:230px}.brand{display:flex;gap:10px;align-items:center;padding:4px 8px 22px}.brand-mark{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#d8f5e2,#54d27e);color:#0b3b1c;display:grid;place-items:center;font-weight:900}.brand strong{display:block;font-size:15px}.brand span{display:block;color:#9fb0a7;font-size:11px;margin-top:2px}.sidebar nav{display:grid;gap:5px}.nav-item{border:0;background:transparent;color:#c8d4cd;text-align:left;padding:11px 12px;border-radius:10px;cursor:pointer;display:flex;gap:10px;align-items:center}.nav-item:hover{background:var(--nav2)}.nav-item.active{background:#14532d;color:#fff}.nav-item span{width:18px;text-align:center}.sidebar-footer{margin-top:auto;background:#15221c;border:1px solid #24372e;padding:12px;border-radius:13px}.local-badge{font-weight:700;font-size:12px}.local-badge i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#40d678;margin-right:6px}.sidebar-footer p{color:#94a79c;font-size:11px;margin:5px 0 10px}.version{display:block;text-align:center;color:#66786e;font-size:10px;margin-top:10px}.main{grid-column:2;padding:0 28px 40px;min-width:0}.topbar{height:94px;display:flex;align-items:center;justify-content:space-between}.topbar h1{font-size:27px;margin:0 0 4px}.topbar p{margin:0;color:var(--muted);font-size:13px}.top-actions{display:flex;align-items:center;gap:14px}.today{font-size:12px;color:var(--muted)}.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;transition:.15s}.btn.primary{background:var(--green);color:#fff}.btn.primary:hover{background:#115629}.btn.secondary{background:#edf2ef;color:#244034;border:1px solid var(--line)}.btn.ghost{background:#fff;border:1px solid var(--line);color:#53685e}.btn.danger{background:var(--redSoft);color:var(--red)}.btn.full{width:100%}.view{display:none}.view.active{display:block}.panel,.kpi,.formula-card,.wizard-header-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.loading-card{background:#fff;border:1px solid var(--line);padding:40px;border-radius:var(--radius);color:var(--muted)}.kpi-grid{display:grid;grid-template-columns:repeat(5,minmax(130px,1fr));gap:12px}.kpi{padding:16px}.kpi .label{color:var(--muted);font-size:12px}.kpi .value{font-size:27px;font-weight:850;margin:6px 0 2px}.kpi .sub{font-size:11px;color:#8a978f}.dashboard-grid{display:grid;grid-template-columns:1.4fr .9fr;gap:14px;margin-top:14px}.panel{padding:18px}.panel h2,.section-toolbar h2,.wizard-header-card h2{margin:0 0 5px;font-size:18px}.panel p,.section-toolbar p,.wizard-header-card p{margin:0;color:var(--muted);font-size:12px}.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.eyebrow{font-size:10px;letter-spacing:.1em;font-weight:900;color:var(--green)}.latest-card{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#f7fbf8,#eef8f1);border:1px solid #d9eadf;padding:15px;border-radius:13px}.latest-code{font-size:19px;font-weight:850}.pill{display:inline-flex;border-radius:99px;padding:4px 8px;font-size:10px;font-weight:800}.pill.good{background:var(--greenSoft);color:var(--green)}.pill.pending{background:var(--amberSoft);color:var(--amber)}.pill.bad{background:var(--redSoft);color:var(--red)}.trend-wrap{height:220px;padding-top:8px}.trend-svg{width:100%;height:100%;overflow:visible}.grid-line{stroke:#e7ece9;stroke-width:1}.trend-yield{fill:none;stroke:#16a34a;stroke-width:3}.trend-ph{fill:none;stroke:#2563eb;stroke-width:2}.trend-brix{fill:none;stroke:#d97706;stroke-width:2}.legend-row{display:flex;gap:15px;font-size:11px;color:var(--muted)}.legend-line{width:14px;height:3px;display:inline-block;margin-right:5px;vertical-align:middle;border-radius:9px}.mini-table{width:100%;border-collapse:collapse;font-size:12px}.mini-table th{text-align:left;color:var(--muted);font-weight:600;border-bottom:1px solid var(--line);padding:8px}.mini-table td{padding:9px 8px;border-bottom:1px solid #eef2ef}.stack{display:grid;gap:14px}.formula-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #edf2ef}.formula-row:last-child{border-bottom:0}.formula-icon{width:36px;height:36px;border-radius:10px;background:var(--greenSoft);display:grid;place-items:center;color:var(--green);font-size:19px}.formula-row .grow{flex:1}.formula-row strong{font-size:13px;display:block}.formula-row small{color:var(--muted)}.bar{height:6px;background:#e9efeb;border-radius:5px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--green2)}.shelf-timeline{display:grid;gap:9px}.shelf-item{display:grid;grid-template-columns:100px 1fr 70px;gap:10px;align-items:center;font-size:11px}.shelf-track{height:6px;background:#edf2ef;border-radius:99px;overflow:hidden}.shelf-track i{display:block;height:100%;background:var(--green2)}.alert-list{display:grid;gap:9px}.alert{padding:10px 12px;border-radius:10px;background:#fbfcfb;border:1px solid var(--line);font-size:11px}.alert strong{display:block;font-size:12px}.alert.amber{border-left:4px solid #f59e0b}.empty{padding:26px;text-align:center;color:var(--muted);border:1px dashed #cfd9d3;border-radius:12px}.section-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.search,.field{border:1px solid #dbe4df;border-radius:9px;background:#fff;padding:9px 10px;outline:none}.search{width:260px}.search:focus,.field:focus{border-color:#7bc693;box-shadow:0 0 0 3px #e7f7ec}.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.formula-card{padding:17px}.formula-card .top{display:flex;justify-content:space-between;align-items:flex-start}.formula-card h3{margin:8px 0 3px;font-size:16px}.formula-card .meta{color:var(--muted);font-size:11px}.ingredient-list{margin-top:14px;display:grid;gap:8px}.ingredient{display:grid;grid-template-columns:1fr 70px 55px;gap:8px;border-top:1px solid #eef2ef;padding-top:7px;font-size:12px}.ingredient span:nth-child(2),.ingredient span:nth-child(3){text-align:right}.table-panel{padding:0;overflow:hidden}.data-table{width:100%;border-collapse:collapse;font-size:12px}.data-table thead{background:#f8faf9}.data-table th{color:#64756c;text-align:left;font-weight:700;padding:11px;border-bottom:1px solid var(--line)}.data-table td{padding:11px;border-bottom:1px solid #edf1ef;vertical-align:middle}.data-table tr:hover td{background:#fbfdfc}.wizard-header-card{padding:18px 20px;display:flex;justify-content:space-between;align-items:center}.draft-state{background:#f1f5f3;border-radius:10px;padding:9px 12px;font-size:11px;color:#597066}.wizard-steps{display:grid;grid-template-columns:repeat(8,1fr);gap:7px;margin:13px 0}.wizard-step{background:#fff;border:1px solid var(--line);border-radius:11px;padding:10px 8px;text-align:center;color:#7a8981;font-size:10px}.wizard-step .num{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;background:#eef2f0;margin:0 auto 5px;font-weight:850}.wizard-step.active{border-color:#6ebd87;background:#f2fbf5;color:#154d28}.wizard-step.active .num,.wizard-step.done .num{background:var(--green);color:#fff}.wizard-step.done{color:#1e6d38}.wizard-body{min-height:410px}.wizard-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}.wizard-actions #wizardBack{margin-right:auto}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.field-group{display:grid;gap:5px}.field-group label{font-size:11px;font-weight:800;color:#42564b}.field-group .hint{font-size:10px;color:#8a978f}.field-group.full{grid-column:1/-1}.ingredient-editor{margin-top:15px}.ingredient-edit-row{display:grid;grid-template-columns:1.5fr .7fr .5fr .6fr 36px;gap:8px;margin-bottom:8px}.step-title{margin-bottom:15px}.step-title h3{margin:0 0 5px}.step-title p{color:var(--muted);font-size:12px;margin:0}.metric-boxes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0}.metric-box{background:#f7faf8;border:1px solid var(--line);border-radius:11px;padding:12px}.metric-box .m-label{font-size:10px;color:var(--muted)}.metric-box .m-value{font-size:20px;font-weight:850;margin-top:4px}.quality-options{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.summary-box{padding:14px;border:1px solid var(--line);border-radius:12px;background:#f8fbf9}.summary-box strong{display:block;font-size:21px;margin-top:4px}.summary-section{margin-top:16px}.callout{border-radius:10px;padding:11px 13px;font-size:11px;margin-top:12px}.callout.success{background:var(--greenSoft);color:#205d34}.callout.warn{background:var(--amberSoft);color:#8a5504}.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.mini-flow{display:flex;gap:8px;align-items:center;margin-top:18px}.mini-flow span{padding:9px 12px;background:#f4f8f5;border:1px solid var(--line);border-radius:9px;font-size:11px}.legend{font-size:11px;color:var(--muted);display:flex;gap:8px;align-items:center}.dot{width:8px;height:8px;border-radius:50%;display:inline-block}.dot.green{background:#22c55e}.dot.amber{background:#f59e0b}.dot.red{background:#ef4444}.inline-input{width:72px;padding:7px;border:1px solid var(--line);border-radius:7px}.hidden{display:none!important}.toast{position:fixed;right:26px;bottom:24px;background:#122219;color:#fff;border-radius:11px;padding:12px 16px;box-shadow:0 12px 30px rgba(0,0,0,.18);font-size:12px;opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translateY(0)}code{background:#f0f4f2;padding:2px 5px;border-radius:5px;color:#27573a}
+@media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(3,1fr)}.dashboard-grid{grid-template-columns:1fr}.card-grid{grid-template-columns:repeat(2,1fr)}.wizard-steps{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:820px){.app-shell{display:block}.sidebar{position:relative;width:auto}.main{padding:0 14px 30px}.topbar{height:auto;padding:18px 0}.top-actions .today{display:none}.kpi-grid,.card-grid,.form-grid,.settings-grid,.summary-grid{grid-template-columns:1fr}.wizard-steps{grid-template-columns:repeat(2,1fr)}.quality-options{grid-template-columns:1fr 1fr}}
+
+</style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">HS</div>
+        <div><strong>Health Shot Lab</strong><span>Homemade Personal Lab</span></div>
+      </div>
+      <nav>
+        <button class="nav-item active" data-view="dashboard"><span>⌂</span>Dashboard</button>
+        <button class="nav-item" data-view="new-batch"><span>＋</span>New Batch</button>
+        <button class="nav-item" data-view="formulas"><span>⚗</span>Formulas</button>
+        <button class="nav-item" data-view="batches"><span>▤</span>Batch History</button>
+        <button class="nav-item" data-view="shelf-life"><span>◷</span>Shelf-life</button>
+        <button class="nav-item" data-view="settings"><span>⚙</span>Settings</button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="local-badge"><i></i> Local Mode</div>
+        <p>ข้อมูลอยู่ในเครื่องนี้</p>
+        <button id="backupBtn" class="btn secondary full">Backup Data</button>
+        <span class="version">v0.2 Portable Homemade MVP</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="pageSubtitle">ภาพรวมการทดลองและคุณภาพล่าสุด</p>
+        </div>
+        <div class="top-actions">
+          <span class="today" id="todayLabel"></span>
+          <button class="btn primary" data-view-jump="new-batch">+ New Batch</button>
+        </div>
+      </header>
+
+      <section id="view-dashboard" class="view active">
+        <div id="dashboardContent" class="loading-card">กำลังโหลดข้อมูล...</div>
+      </section>
+
+      <section id="view-new-batch" class="view">
+        <div class="wizard-header-card">
+          <div>
+            <span class="eyebrow">GUIDED BATCH WIZARD</span>
+            <h2>ทำ Health Shot ทีละขั้น</h2>
+            <p>เหมาะสำหรับ Homemade batch 3–5 L • ระบบคำนวณ Yield และต้นทุนให้</p>
+          </div>
+          <div class="draft-state" id="draftState">Draft ยังไม่เริ่ม</div>
+        </div>
+        <div id="wizardSteps" class="wizard-steps"></div>
+        <div id="wizardBody" class="panel wizard-body"></div>
+        <div class="wizard-actions">
+          <button id="wizardBack" class="btn secondary">← ย้อนกลับ</button>
+          <button id="wizardSave" class="btn ghost">บันทึก Draft</button>
+          <button id="wizardNext" class="btn primary">ถัดไป →</button>
+        </div>
+      </section>
+
+      <section id="view-formulas" class="view">
+        <div class="section-toolbar">
+          <div><h2>Formula Library</h2><p>เก็บสูตรเป็น Version เพื่อเทียบผลแต่ละ Batch</p></div>
+          <button id="newFormulaBtn" class="btn primary">+ New Formula</button>
+        </div>
+        <div id="formulaEditor" class="panel hidden"></div>
+        <div id="formulaList" class="card-grid"></div>
+      </section>
+
+      <section id="view-batches" class="view">
+        <div class="section-toolbar">
+          <div><h2>Batch History</h2><p>ดู Yield, QC, จำนวนขวด และต้นทุนย้อนหลัง</p></div>
+          <input id="batchSearch" class="search" placeholder="ค้นหา Batch / สูตร..." />
+        </div>
+        <div class="panel table-panel"><div id="batchTable"></div></div>
+      </section>
+
+      <section id="view-shelf-life" class="view">
+        <div class="section-toolbar">
+          <div><h2>Shelf-life Tracker</h2><p>Fresh checkpoint เริ่มต้น Day 0 / 3 / 5 / 7</p></div>
+          <div class="legend"><span class="dot green"></span>ผ่าน <span class="dot amber"></span>รอตรวจ <span class="dot red"></span>ไม่ผ่าน</div>
+        </div>
+        <div class="panel table-panel"><div id="shelfLifeTable"></div></div>
+      </section>
+
+      <section id="view-settings" class="view">
+        <div class="settings-grid">
+          <div class="panel">
+            <span class="eyebrow">LOCAL-FIRST</span>
+            <h2>ข้อมูลอยู่กับคุณ</h2>
+            <p>ข้อมูลเก็บใน Browser Local Storage ของเครื่องนี้ และกด Backup Data เพื่อดาวน์โหลดไฟล์ JSON ได้</p>
+            <div class="callout success">ไม่มี Cloud Sync • ไม่มี Login • ไม่มีการส่งข้อมูลออกอินเทอร์เน็ต</div>
+          </div>
+          <div class="panel">
+            <span class="eyebrow">NEXT PHASE</span>
+            <h2>HPP-ready Schema</h2>
+            <p>โครงข้อมูลเตรียมให้เพิ่ม HPP Cycle ใน Phase 2 เพื่อเชื่อม Pressure / Hold Time / Temperature กับ Batch ได้</p>
+            <div class="mini-flow"><span>Batch</span><b>→</b><span>HPP Cycle</span><b>→</b><span>Shelf-life</span></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script>
+const WIZARD_STEPS = ['Formula','Ingredients','Extraction / Yield','Blend','QC','Filling','Cost','Summary'];
+const state = { formulas: [], batches: [], shelfLife: [], wizardStep: 0, wizard: null, activeView: 'dashboard' };
+const $ = (q) => document.querySelector(q);
+const $$ = (q) => [...document.querySelectorAll(q)];
+const money = n => `${Number(n || 0).toFixed(2)} ฿`;
+const num = (n, d=2) => Number(n || 0).toFixed(d);
+const measurement = value => { const n=value===''||value==null?null:Number(value); return Number.isFinite(n)?n:null; };
+const isMeasuredExtraction = entry => Number(entry?.raw_input_kg)>0 && String(entry?.juice_output_l??'').trim()!=='' && Number.isFinite(Number(entry.juice_output_l));
+
+const PORTABLE_KEY = 'healthshot-lab-data-v1';
+function portableToday(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function portableNow(){ return new Date().toISOString().slice(0,19); }
+function portableSeed(){
+  return {
+    nextFormulaId: 2, nextBatchId: 1, nextShelfId: 1,
+    formulas: [{id:1,name:'Ginger Basic',version:'v0.1',target_volume_l:5,status:'active',created_at:portableNow(),ingredients:[
+      {name:'Apple juice',target_qty:3.95,unit:'L',percent:79},
+      {name:'Ginger juice',target_qty:0.85,unit:'L',percent:17},
+      {name:'Lemon juice',target_qty:0.20,unit:'L',percent:4}
+    ]}],
+    batches: [], shelfLife: []
+  };
+}
+function portableLoad(){
+  try { const x=JSON.parse(localStorage.getItem(PORTABLE_KEY)||'null'); return x && x.formulas ? x : portableSeed(); }
+  catch(e){ return portableSeed(); }
+}
+function portableSave(db){ localStorage.setItem(PORTABLE_KEY, JSON.stringify(db)); }
+function portableFormula(db,id){ return db.formulas.find(f=>Number(f.id)===Number(id)); }
+function portableBatchView(db,b){
+  const f=portableFormula(db,b.formula_id)||{};
+  const ex=(b.extractions||[]).filter(isMeasuredExtraction);
+  const avg=ex.length ? ex.reduce((s,e)=>s+Number(e.yield_percent||0),0)/ex.length : 0;
+  return {...b,formula_name:f.name||'',formula_version:f.version||'',ph:measurement(b.qc?.ph),brix:measurement(b.qc?.brix),
+    cost_per_bottle:b.cost?.cost_per_bottle||0,good_bottles:b.filling?.good_bottles||0,reject_bottles:b.filling?.reject_bottles||0,avg_yield:avg};
+}
+function portableBatchDetail(db,b){
+  const v=portableBatchView(db,b);
+  return {...v,ingredients:b.ingredients||[],extractions:b.extractions||[],qc:b.qc||null,filling:b.filling||null,cost:b.cost||null};
+}
+function portableBatchCode(db){
+  const d=portableToday().replaceAll('-','');
+  const count=db.batches.filter(b=>(b.code||'').startsWith(`HS-${d}-`)).length+1;
+  return `HS-${d}-${String(count).padStart(3,'0')}`;
+}
+function portableAddDays(iso,days){ const [year,month,day]=iso.split('-').map(Number); return new Date(Date.UTC(year,month-1,day+Number(days))).toISOString().slice(0,10); }
+function portableShelfLife(db){return db.shelfLife.map(s=>{const b=db.batches.find(x=>x.id===s.batch_id)||{};const f=portableFormula(db,b.formula_id)||{};return {...s,batch_code:b.code||'',formula_name:f.name||''};}).sort((a,b)=>String(a.due_date).localeCompare(String(b.due_date))||a.day_number-b.day_number);}
+function portableDashboard(db){
+  const all=db.batches.map(b=>portableBatchView(db,b)).sort((a,b)=>b.id-a.id);
+  const recent=all.filter(b=>b.status==='completed').slice(0,10);
+  const avg=(k)=>{ const a=recent.map(x=>x[k]).filter(Number.isFinite); return a.length?Math.round(a.reduce((s,x)=>s+x,0)/a.length*100)/100:null; };
+  const latestRaw=db.batches.filter(b=>b.status==='completed').sort((a,b)=>b.id-a.id)[0];
+  const shelf=portableShelfLife(db);
+  return {latestBatch:latestRaw?portableBatchDetail(db,latestRaw):null,kpis:{yield:avg('avg_yield'),ph:avg('ph'),brix:avg('brix'),costPerBottle:avg('cost_per_bottle'),bottles:recent.reduce((s,b)=>s+Number(b.good_bottles||0),0)},recentBatches:recent,formulas:db.formulas,shelfLife:shelf.slice(0,12)};
+}
+async function api(path, options={}) {
+  const db=portableLoad(); const method=(options.method||'GET').toUpperCase(); const body=typeof options.body==='string'?JSON.parse(options.body||'{}'):(options.body||{});
+  if(method==='GET' && path==='/api/dashboard') return portableDashboard(db);
+  if(method==='GET' && path==='/api/formulas') return [...db.formulas].sort((a,b)=>b.id-a.id);
+  if(method==='POST' && path==='/api/formulas'){
+    if(!body.name||!body.version||Number(body.target_volume_l)<=0||!body.ingredients?.length) throw new Error('กรอกข้อมูลสูตรให้ครบ');
+    const id=db.nextFormulaId++; db.formulas.push({id,name:String(body.name),version:String(body.version),target_volume_l:Number(body.target_volume_l),status:'active',created_at:portableNow(),ingredients:body.ingredients.map(i=>({...i,target_qty:Number(i.target_qty),percent:Number(i.percent||0)}))}); portableSave(db); return {id};
+  }
+  if(method==='GET' && path==='/api/batches') return db.batches.map(b=>portableBatchView(db,b)).sort((a,b)=>b.id-a.id);
+  if(method==='POST' && path==='/api/batches'){
+    if(!body.formula_id||Number(body.target_volume_l)<=0) throw new Error('กรุณาเลือกสูตรและขนาด Batch');
+    const id=db.nextBatchId++; const b={id,code:portableBatchCode(db),formula_id:Number(body.formula_id),target_volume_l:Number(body.target_volume_l),actual_volume_l:0,status:'draft',started_at:portableNow(),completed_at:null,notes:'',ingredients:(body.ingredients||[]).map(i=>({...i,target_qty:Number(i.target_qty||0),actual_qty:Number(i.actual_qty||0)})),extractions:[],qc:null,filling:null,cost:null}; db.batches.push(b); portableSave(db); return {id,batch:portableBatchDetail(db,b)};
+  }
+  const bm=path.match(/^\/api\/batches\/(\d+)$/); if(method==='GET'&&bm){const b=db.batches.find(x=>x.id===Number(bm[1])); if(!b) throw new Error('batch not found'); return portableBatchDetail(db,b);}
+  if(method==='PATCH'&&bm){const b=db.batches.find(x=>x.id===Number(bm[1])); if(!b) throw new Error('batch not found'); if(b.status!=='draft') throw new Error('batch is already completed'); if(!body.formula_id||Number(body.target_volume_l)<=0) throw new Error('กรุณาเลือกสูตรและขนาด Batch'); b.formula_id=Number(body.formula_id); b.target_volume_l=Number(body.target_volume_l); b.ingredients=(body.ingredients||[]).map(i=>({...i,target_qty:Number(i.target_qty||0),actual_qty:Number(i.actual_qty||0)})); portableSave(db); return {id:b.id,batch:portableBatchDetail(db,b)};}
+  const cm=path.match(/^\/api\/batches\/(\d+)\/complete$/); if(method==='POST'&&cm){
+    const b=db.batches.find(x=>x.id===Number(cm[1])); if(!b) throw new Error('batch not found');
+    b.actual_volume_l=Number(body.actual_volume_l||0); b.status='completed'; b.completed_at=portableNow();
+    b.extractions=(body.extractions||[]).filter(isMeasuredExtraction).map(e=>{const raw=Number(e.raw_input_kg||0),juice=Number(e.juice_output_l||0);return {...e,raw_input_kg:raw,juice_output_l:juice,yield_percent:juice/raw*100};});
+    const q=body.qc||{}; b.qc={...q,ph:measurement(q.ph),brix:measurement(q.brix),temperature_c:measurement(q.temperature_c),recorded_at:portableNow()}; const f=body.filling||{}; const good=Number(f.good_bottles||0),size=Number(f.bottle_size_ml||60); b.filling={...f,bottle_size_ml:size,good_bottles:good,reject_bottles:Number(f.reject_bottles||0),filled_volume_l:good*size/1000};
+    const c=body.cost||{}; const total=Number(c.raw_material_cost||0)+Number(c.packaging_cost||0)+Number(c.utilities_cost||0); b.cost={...c,total_cost:total,cost_per_bottle:good?total/good:0};
+    if(!db.shelfLife.some(s=>s.batch_id===b.id)){ [0,3,5,7].forEach(day=>db.shelfLife.push({id:db.nextShelfId++,batch_id:b.id,day_number:day,due_date:portableAddDays(portableToday(),day),ph:null,brix:null,status:'pending',notes:''})); }
+    portableSave(db); return {ok:true,batch:portableBatchDetail(db,b)};
+  }
+  if(method==='GET' && path==='/api/shelf-life') return portableShelfLife(db);
+  const sm=path.match(/^\/api\/shelf-life\/(\d+)$/); if(method==='POST'&&sm){const s=db.shelfLife.find(x=>x.id===Number(sm[1])); if(!s) throw new Error('shelf-life checkpoint not found'); Object.assign(s,body); portableSave(db); return {ok:true};}
+  throw new Error('ไม่พบคำสั่งข้อมูล');
+}
+function toast(message) {
+  const el = $('#toast'); el.textContent = message; el.classList.add('show');
+  clearTimeout(toast.t); toast.t = setTimeout(()=>el.classList.remove('show'), 2200);
+}
+
+function setView(name) {
+  state.activeView = name;
+  $$('.view').forEach(v=>v.classList.toggle('active', v.id === `view-${name}`));
+  $$('.nav-item').forEach(b=>b.classList.toggle('active', b.dataset.view === name));
+  const meta = {
+    dashboard:['Dashboard','ภาพรวมการทดลองและคุณภาพล่าสุด'],
+    'new-batch':['New Batch','Guided workflow สำหรับ Homemade batch'],
+    formulas:['Formulas','สูตรและ Version ที่กำลังทดลอง'],
+    batches:['Batch History','ผลการผลิตย้อนหลังและแนวโน้ม'],
+    'shelf-life':['Shelf-life','ติดตามคุณภาพ Fresh product ตามเวลา'],
+    settings:['Settings','Local data & future HPP readiness']
+  }[name];
+  $('#pageTitle').textContent = meta[0]; $('#pageSubtitle').textContent = meta[1];
+  if (name === 'dashboard') loadDashboard();
+  if (name === 'formulas') loadFormulas();
+  if (name === 'batches') loadBatches();
+  if (name === 'shelf-life') loadShelfLife();
+  if (name === 'new-batch') initWizard(false);
+}
+
+function sparkPoints(values, w=500, h=180, pad=18, minOverride=null, maxOverride=null) {
+  const measured=values.filter(Number.isFinite);
+  if (!measured.length) return '';
+  const min = minOverride ?? Math.min(...measured); const max = maxOverride ?? Math.max(...measured);
+  const span = Math.max(max-min, .001);
+  return values.map((v,i)=>{
+    if(!Number.isFinite(v)) return '';
+    const x = pad + i * ((w-pad*2)/Math.max(values.length-1,1));
+    const y = h-pad - ((v-min)/span)*(h-pad*2);
+    return `${x},${y}`;
+  }).filter(Boolean).join(' ');
+}
+
+async function loadDashboard() {
+  const el = $('#dashboardContent');
+  try {
+    const d = await api('/api/dashboard');
+    state.formulas=d.formulas; state.batches=d.recentBatches; state.shelfLife=d.shelfLife;
+    const recent=[...d.recentBatches].reverse();
+    const yieldVals=recent.map(x=>Number(x.avg_yield||0));
+    const phVals=recent.map(x=>x.ph);
+    const brixVals=recent.map(x=>x.brix);
+    const latest=d.latestBatch;
+    const due=d.shelfLife.filter(x=>x.status==='pending').slice(0,4);
+    el.className='';
+    el.innerHTML=`
+      <div class="kpi-grid">
+        ${kpi('Average Yield',`${num(d.kpis.yield,1)}%`,'เฉลี่ย 10 Batch ล่าสุด')}
+        ${kpi('Average pH',d.kpis.ph==null?'—':num(d.kpis.ph,2),'ติดตามความสม่ำเสมอ')}
+        ${kpi('Average Brix',d.kpis.brix==null?'—':`${num(d.kpis.brix,1)} °Bx`,'ความหวาน/solid')}
+        ${kpi('Cost / Bottle',money(d.kpis.costPerBottle),'Actual batch cost')}
+        ${kpi('Bottles Tracked',d.kpis.bottles,'จาก Batch ที่เสร็จแล้ว')}
+      </div>
+      <div class="dashboard-grid">
+        <div class="stack">
+          <div class="panel">
+            <div class="panel-head"><div><span class="eyebrow">LATEST BATCH</span><h2>ผลทดลองล่าสุด</h2></div>${latest?'<span class="pill good">Completed</span>':''}</div>
+            ${latest?`<div class="latest-card"><div><div class="latest-code">${latest.code}</div><div class="meta">${latest.formula_name} ${latest.formula_version} • ${latest.actual_volume_l} L</div></div><div><strong>${latest.filling?.good_bottles||0}</strong> bottles<br><small>${money(latest.cost?.cost_per_bottle)} / bottle</small></div></div>`:'<div class="empty">ยังไม่มี Batch ที่เสร็จแล้ว<br><button class="btn primary" onclick="setView(\'new-batch\')" style="margin-top:10px">เริ่ม Batch แรก</button></div>'}
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div><span class="eyebrow">10-BATCH TREND</span><h2>Yield / pH / Brix</h2></div><div class="legend-row"><span><i class="legend-line" style="background:#16a34a"></i>Yield</span><span><i class="legend-line" style="background:#2563eb"></i>pH</span><span><i class="legend-line" style="background:#d97706"></i>Brix</span></div></div>
+            ${recent.length?`<div class="trend-wrap"><svg class="trend-svg" viewBox="0 0 500 180" preserveAspectRatio="none">${[30,70,110,150].map(y=>`<line x1="18" y1="${y}" x2="482" y2="${y}" class="grid-line"/>`).join('')}<polyline class="trend-yield" points="${sparkPoints(yieldVals,500,180,18,0,100)}"/><polyline class="trend-ph" points="${sparkPoints(phVals,500,180,18,2.5,4.5)}"/><polyline class="trend-brix" points="${sparkPoints(brixVals,500,180,18,0,15)}"/></svg></div>`:'<div class="empty">Trend จะเริ่มแสดงหลังมี Batch แรก</div>'}
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div><span class="eyebrow">RECENT BATCHES</span><h2>บันทึกล่าสุด</h2></div><button class="btn secondary" onclick="setView('batches')">ดูทั้งหมด</button></div>
+            ${recentTable(d.recentBatches.slice(0,5))}
+          </div>
+        </div>
+        <div class="stack">
+          <div class="panel">
+            <div class="panel-head"><div><span class="eyebrow">ACTIVE FORMULAS</span><h2>สูตรที่กำลังทดลอง</h2></div><button class="btn secondary" onclick="setView('formulas')">จัดการ</button></div>
+            ${d.formulas.map((f,i)=>`<div class="formula-row"><div class="formula-icon">⚗</div><div class="grow"><strong>${f.name} ${f.version}</strong><small>${f.target_volume_l} L • ${f.ingredients.length} ingredients</small><div class="bar"><i style="width:${Math.max(35,85-i*12)}%"></i></div></div></div>`).join('') || '<div class="empty">ยังไม่มีสูตร</div>'}
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div><span class="eyebrow">SHELF-LIFE</span><h2>จุดตรวจถัดไป</h2></div></div>
+            <div class="shelf-timeline">${due.length?due.map(s=>`<div class="shelf-item"><b>${s.batch_code}</b><div class="shelf-track"><i style="width:${Math.min(100,s.day_number/7*100)}%"></i></div><span>Day ${s.day_number}</span></div>`).join(''):'<div class="empty">ยังไม่มี checkpoint</div>'}</div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div><span class="eyebrow">LAB ALERTS</span><h2>สิ่งที่ควรทำ</h2></div></div>
+            <div class="alert-list">${due.length?due.map(s=>`<div class="alert amber"><strong>ตรวจ Shelf-life Day ${s.day_number}</strong>${s.batch_code} • ${s.due_date}</div>`).join(''):'<div class="alert"><strong>พร้อมเริ่มทดลอง</strong>สร้าง Batch ใหม่เพื่อเริ่มสะสมข้อมูล Yield และ QC</div>'}</div>
+          </div>
+        </div>
+      </div>`;
+  } catch(e) { el.innerHTML=`<div class="empty">โหลด Dashboard ไม่สำเร็จ: ${e.message}</div>`; }
+}
+
+function kpi(label,value,sub){return `<div class="kpi"><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub}</div></div>`}
+function recentTable(rows){ if(!rows.length)return '<div class="empty">ยังไม่มีข้อมูล</div>'; return `<table class="mini-table"><thead><tr><th>Batch</th><th>Formula</th><th>Yield</th><th>pH</th><th>Cost</th></tr></thead><tbody>${rows.map(b=>`<tr><td><b>${b.code}</b></td><td>${b.formula_name} ${b.formula_version}</td><td>${num(b.avg_yield,1)}%</td><td>${num(b.ph,2)}</td><td>${money(b.cost_per_bottle)}</td></tr>`).join('')}</tbody></table>`; }
+
+async function loadFormulas(){
+  try{state.formulas=await api('/api/formulas'); renderFormulas();}catch(e){toast(e.message)}
+}
+function renderFormulas(){
+  $('#formulaList').innerHTML=state.formulas.map(f=>`<div class="formula-card"><div class="top"><div class="formula-icon">⚗</div><span class="pill good">${f.status}</span></div><h3>${f.name} ${f.version}</h3><div class="meta">Target ${f.target_volume_l} L • Created ${String(f.created_at).slice(0,10)}</div><div class="ingredient-list">${f.ingredients.map(i=>`<div class="ingredient"><span>${i.name}</span><span>${num(i.target_qty,2)} ${i.unit}</span><span>${num(i.percent,1)}%</span></div>`).join('')}</div></div>`).join('') || '<div class="empty">ยังไม่มีสูตร</div>';
+}
+function showFormulaEditor(){
+  const box=$('#formulaEditor'); box.classList.remove('hidden'); box.innerHTML=`<div class="panel-head"><div><span class="eyebrow">NEW FORMULA</span><h2>สร้างสูตรทดลอง</h2></div><button class="btn ghost" onclick="$('#formulaEditor').classList.add('hidden')">ปิด</button></div><div class="form-grid"><div class="field-group"><label>ชื่อสูตร</label><input id="fName" class="field" value="Ginger Experiment"></div><div class="field-group"><label>Version</label><input id="fVersion" class="field" value="v0.2"></div><div class="field-group"><label>Target Batch (L)</label><input id="fVolume" type="number" step="0.1" class="field" value="5"></div></div><div class="ingredient-editor"><b>Ingredients</b><div id="fIngredients"></div><button class="btn secondary" onclick="addFormulaIngredient()">+ Ingredient</button> <button class="btn primary" onclick="saveFormula()">Save Formula</button></div>`;
+  [['Apple juice',3.95,'L',79],['Ginger juice',.85,'L',17],['Lemon juice',.2,'L',4]].forEach(x=>addFormulaIngredient(...x));
+}
+function addFormulaIngredient(name='',qty='',unit='L',pct=''){const row=document.createElement('div');row.className='ingredient-edit-row';row.innerHTML=`<input class="field fi-name" placeholder="Ingredient" value="${name}"><input class="field fi-qty" type="number" step="0.01" placeholder="Qty" value="${qty}"><input class="field fi-unit" value="${unit}"><input class="field fi-pct" type="number" step="0.1" placeholder="%" value="${pct}"><button class="btn danger" onclick="this.parentElement.remove()">×</button>`;$('#fIngredients').appendChild(row)}
+async function saveFormula(){try{const ingredients=$$('#fIngredients .ingredient-edit-row').map(r=>({name:r.querySelector('.fi-name').value,target_qty:Number(r.querySelector('.fi-qty').value),unit:r.querySelector('.fi-unit').value,percent:Number(r.querySelector('.fi-pct').value)})).filter(x=>x.name);await api('/api/formulas',{method:'POST',body:{name:$('#fName').value,version:$('#fVersion').value,target_volume_l:Number($('#fVolume').value),ingredients}});toast('บันทึกสูตรแล้ว');$('#formulaEditor').classList.add('hidden');loadFormulas();}catch(e){toast(e.message)}}
+
+async function loadBatches(){try{state.batches=await api('/api/batches');renderBatchTable(state.batches);}catch(e){toast(e.message)}}
+function renderBatchTable(rows){$('#batchTable').innerHTML=rows.length?`<table class="data-table"><thead><tr><th>Batch</th><th>Formula</th><th>Status</th><th>Volume</th><th>Yield</th><th>pH</th><th>Brix</th><th>Bottles</th><th>Reject</th><th>Cost/Bottle</th></tr></thead><tbody>${rows.map(b=>`<tr><td><b>${b.code}</b><br><small>${String(b.started_at).slice(0,16).replace('T',' ')}</small></td><td>${b.formula_name||'-'} ${b.formula_version||''}</td><td><span class="pill ${b.status==='completed'?'good':'pending'}">${b.status}</span></td><td>${num(b.actual_volume_l||b.target_volume_l,1)} L</td><td>${num(b.avg_yield,1)}%</td><td>${b.ph==null?'-':num(b.ph,2)}</td><td>${b.brix==null?'-':num(b.brix,1)}</td><td>${b.good_bottles||0}</td><td>${b.reject_bottles||0}</td><td>${money(b.cost_per_bottle)}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">ยังไม่มี Batch</div>'}
+
+async function loadShelfLife(){try{state.shelfLife=await api('/api/shelf-life');renderShelfLife();}catch(e){toast(e.message)}}
+function renderShelfLife(){const rows=state.shelfLife;$('#shelfLifeTable').innerHTML=rows.length?`<table class="data-table"><thead><tr><th>Batch</th><th>Day</th><th>Due</th><th>pH</th><th>Brix</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody>${rows.map(s=>`<tr><td><b>${s.batch_code}</b><br><small>${s.formula_name||''}</small></td><td>Day ${s.day_number}</td><td>${s.due_date}</td><td><input id="sl-ph-${s.id}" class="inline-input" type="number" step="0.01" value="${s.ph??''}"></td><td><input id="sl-brix-${s.id}" class="inline-input" type="number" step="0.1" value="${s.brix??''}"></td><td><select id="sl-status-${s.id}" class="field"><option value="pending" ${s.status==='pending'?'selected':''}>Pending</option><option value="passed" ${s.status==='passed'?'selected':''}>Passed</option><option value="failed" ${s.status==='failed'?'selected':''}>Failed</option></select></td><td><input id="sl-notes-${s.id}" class="field" value="${s.notes||''}" placeholder="สี/กลิ่น/รส"></td><td><button class="btn secondary" onclick="saveShelf(${s.id})">Save</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Checkpoint จะถูกสร้างเมื่อจบ Batch</div>'}
+async function saveShelf(id){try{await api(`/api/shelf-life/${id}`,{method:'POST',body:{ph:valNum(`#sl-ph-${id}`),brix:valNum(`#sl-brix-${id}`),status:$(`#sl-status-${id}`).value,notes:$(`#sl-notes-${id}`).value}});toast('บันทึก Shelf-life แล้ว');loadShelfLife();}catch(e){toast(e.message)}}
+function valNum(sel){const v=$(sel)?.value;return v===''?null:Number(v)}
+
+function freshWizard(){return {formula_id:null,target_volume_l:5,ingredients:[],extractions:[],actual_volume_l:5,qc:{ph:'',brix:'',temperature_c:4,appearance:'ใส/สีสม่ำเสมอ',odor:'สด',taste:'สมดุล',separation:'ต่ำ'},filling:{bottle_size_ml:60,good_bottles:null,reject_bottles:0},cost:{raw_material_cost:0,packaging_cost:0,utilities_cost:0},batch_id:null,notes:''}}
+async function initWizard(forceNew=false){
+  if(!state.formulas.length) state.formulas=await api('/api/formulas');
+  if(forceNew){localStorage.removeItem('healthshot-wizard');state.wizard=null;state.wizardStep=0}
+  if(!state.wizard){const saved=localStorage.getItem('healthshot-wizard');state.wizard=saved?JSON.parse(saved):freshWizard();state.wizardStep=Number(localStorage.getItem('healthshot-wizard-step')||0)}
+  renderWizard();
+}
+function persistWizard(){localStorage.setItem('healthshot-wizard',JSON.stringify(state.wizard));localStorage.setItem('healthshot-wizard-step',String(state.wizardStep));$('#draftState').textContent=`Draft • Step ${state.wizardStep+1}/8`;}
+function renderWizard(){
+  $('#wizardSteps').innerHTML=WIZARD_STEPS.map((s,i)=>`<div class="wizard-step ${i===state.wizardStep?'active':i<state.wizardStep?'done':''}"><div class="num">${i<state.wizardStep?'✓':i+1}</div>${s}</div>`).join('');
+  $('#wizardBack').disabled=state.wizardStep===0;$('#wizardNext').textContent=state.wizardStep===7?'Finish Batch ✓':'ถัดไป →';
+  const renders=[stepFormula,stepIngredients,stepExtraction,stepBlend,stepQC,stepFilling,stepCost,stepSummary];
+  $('#wizardBody').innerHTML=renders[state.wizardStep](); bindWizardFields(); persistWizard();
+}
+function stepFormula(){return `<div class="step-title"><h3>1. เลือกสูตรและขนาด Batch</h3><p>เริ่มจาก 3–5 L เพื่อทดลองให้ทำซ้ำง่าย</p></div><div class="form-grid"><div class="field-group"><label>Formula</label><select id="wFormula" class="field"><option value="">เลือกสูตร...</option>${state.formulas.map(f=>`<option value="${f.id}" ${Number(state.wizard.formula_id)===f.id?'selected':''}>${f.name} ${f.version}</option>`).join('')}</select></div><div class="field-group"><label>Target Batch Volume (L)</label><input id="wTargetVolume" type="number" step="0.1" min="0.5" class="field" value="${state.wizard.target_volume_l}"><span class="hint">Homemade แนะนำ 3–5 L</span></div></div><div class="callout success">สูตร Version จะถูกผูกกับ Batch นี้ เพื่อให้เปรียบเทียบผลย้อนหลังได้</div>`}
+function stepIngredients(){const items=state.wizard.ingredients;return `<div class="step-title"><h3>2. ชั่งวัตถุดิบจริง</h3><p>Target ถูก scale ตาม Batch Volume — กรอก Actual ที่ใช้จริง</p></div>${items.length?`<table class="data-table"><thead><tr><th>Ingredient</th><th>Target</th><th>Actual</th><th>Variance</th></tr></thead><tbody>${items.map((i,idx)=>`<tr><td><b>${i.name}</b></td><td>${num(i.target_qty,3)} ${i.unit}</td><td><input data-i="${idx}" class="field w-ing-actual" type="number" step="0.001" value="${i.actual_qty??i.target_qty}"></td><td id="var-${idx}">${variance(i.actual_qty??i.target_qty,i.target_qty)}%</td></tr>`).join('')}</tbody></table>`:'<div class="empty">เลือก Formula ในขั้นก่อนหน้า</div>'}<div class="callout warn">เป้าหมาย: ชั่งให้ใกล้ Target ±5% เพื่อให้การเทียบ Batch มีความหมาย</div>`}
+function stepExtraction(){const ex=state.wizard.extractions;return `<div class="step-title"><h3>3. Extraction / Yield</h3><p>บันทึกเฉพาะวัตถุดิบที่คั้นเอง เช่น Ginger, Apple, Lemon</p></div><div id="exRows">${ex.map((e,i)=>extractionRow(e,i)).join('')}</div><button class="btn secondary" onclick="addExtraction()">+ Add extraction</button><div class="metric-boxes"><div class="metric-box"><div class="m-label">Average Yield</div><div id="avgYield" class="m-value">${num(avgYield(),1)}%</div></div><div class="metric-box"><div class="m-label">Total Raw Input</div><div id="rawTotal" class="m-value">${num(ex.reduce((a,e)=>a+Number(e.raw_input_kg||0),0),2)} kg</div></div><div class="metric-box"><div class="m-label">Juice Output</div><div id="juiceTotal" class="m-value">${num(ex.reduce((a,e)=>a+Number(e.juice_output_l||0),0),2)} L</div></div></div>`}
+function extractionRow(e,i){return `<div class="ingredient-edit-row ex-row"><input class="field ex-name" data-i="${i}" value="${e.ingredient_name||''}" placeholder="Ingredient"><input class="field ex-raw" data-i="${i}" type="number" step="0.01" value="${e.raw_input_kg||''}" placeholder="Raw kg"><input class="field ex-juice" data-i="${i}" type="number" step="0.01" value="${e.juice_output_l||''}" placeholder="Juice L"><div class="field" style="background:#f6faf7">${yieldOf(e)}%</div><button class="btn danger" onclick="removeExtraction(${i})">×</button></div>`}
+function stepBlend(){return `<div class="step-title"><h3>4. Blend</h3><p>บันทึก Final Blend ก่อน Filling</p></div><div class="form-grid"><div class="field-group"><label>Actual Blend Volume (L)</label><input id="wActualVolume" type="number" step="0.1" class="field" value="${state.wizard.actual_volume_l}"></div><div class="field-group"><label>Batch Notes</label><input id="wNotes" class="field" value="${state.wizard.notes||''}" placeholder="เช่น ginger เผ็ดกว่าปกติ"></div></div><div class="metric-boxes"><div class="metric-box"><div class="m-label">Target</div><div class="m-value">${num(state.wizard.target_volume_l,1)} L</div></div><div class="metric-box"><div class="m-label">Actual</div><div class="m-value">${num(state.wizard.actual_volume_l,1)} L</div></div><div class="metric-box"><div class="m-label">Process Yield</div><div class="m-value">${state.wizard.target_volume_l?num(state.wizard.actual_volume_l/state.wizard.target_volume_l*100,1):'0.0'}%</div></div></div>`}
+function stepQC(){const q=state.wizard.qc;return `<div class="step-title"><h3>5. QC ก่อนบรรจุ</h3><p>เก็บตัวเลขก่อน แล้วค่อยสร้าง Spec หลังมีข้อมูลหลาย Batch</p></div><div class="form-grid"><div class="field-group"><label>pH</label><input id="wPh" type="number" step="0.01" class="field" value="${q.ph}"></div><div class="field-group"><label>Brix (°Bx)</label><input id="wBrix" type="number" step="0.1" class="field" value="${q.brix}"></div><div class="field-group"><label>Temperature (°C)</label><input id="wTemp" type="number" step="0.1" class="field" value="${q.temperature_c}"></div></div><div class="quality-options">${['appearance','odor','taste','separation'].map(k=>`<div class="field-group"><label>${({appearance:'Appearance',odor:'Odor',taste:'Taste',separation:'Separation'})[k]}</label><input id="w-${k}" class="field" value="${q[k]||''}"></div>`).join('')}</div><div class="callout warn">pH/Brix ใน MVP ใช้เพื่อสร้าง baseline ไม่ใช่เกณฑ์ regulatory release</div>`}
+function stepFilling(){const f=state.wizard.filling;const predicted=Math.floor((Number(state.wizard.actual_volume_l||0)*1000)/Number(f.bottle_size_ml||60));if(f.good_bottles==null)f.good_bottles=predicted;return `<div class="step-title"><h3>6. Filling</h3><p>วัด Output และ Reject เพื่อหาความสูญเสียจริง</p></div><div class="form-grid"><div class="field-group"><label>Bottle Size (mL)</label><input id="wBottleSize" type="number" class="field" value="${f.bottle_size_ml}"></div><div class="field-group"><label>Good Bottles</label><input id="wGood" type="number" class="field" value="${f.good_bottles}"></div><div class="field-group"><label>Reject Bottles</label><input id="wReject" type="number" class="field" value="${f.reject_bottles}"></div></div><div class="metric-boxes"><div class="metric-box"><div class="m-label">Theoretical Bottles</div><div class="m-value">${predicted}</div></div><div class="metric-box"><div class="m-label">Good Output</div><div class="m-value">${f.good_bottles}</div></div><div class="metric-box"><div class="m-label">Reject Rate</div><div class="m-value">${rejectRate()}%</div></div></div>`}
+function stepCost(){const c=state.wizard.cost;return `<div class="step-title"><h3>7. Actual Cost</h3><p>ช่วง Homemade เก็บ 3 ก้อนหลักก่อน ไม่ต้องทำ Cost Accounting ซับซ้อน</p></div><div class="form-grid"><div class="field-group"><label>Raw Material Cost (฿)</label><input id="wRawCost" type="number" step="0.01" class="field" value="${c.raw_material_cost}"></div><div class="field-group"><label>Packaging Cost (฿)</label><input id="wPkgCost" type="number" step="0.01" class="field" value="${c.packaging_cost}"></div><div class="field-group"><label>Utilities / Misc. (฿)</label><input id="wUtilCost" type="number" step="0.01" class="field" value="${c.utilities_cost}"></div></div><div class="metric-boxes"><div class="metric-box"><div class="m-label">Total Batch Cost</div><div class="m-value">${money(totalCost())}</div></div><div class="metric-box"><div class="m-label">Cost / Bottle</div><div class="m-value">${money(costPerBottle())}</div></div><div class="metric-box"><div class="m-label">Good Bottles</div><div class="m-value">${state.wizard.filling.good_bottles||0}</div></div></div>`}
+function stepSummary(){const w=state.wizard;const f=state.formulas.find(x=>x.id===Number(w.formula_id));return `<div class="step-title"><h3>8. Summary & Complete</h3><p>ตรวจครั้งสุดท้าย ก่อนบันทึกลง Browser Storage และสร้าง Shelf-life checkpoints</p></div><div class="summary-grid"><div class="summary-box">Formula<strong>${f?f.name:'-'}</strong>${f?f.version:''}</div><div class="summary-box">Final Volume<strong>${num(w.actual_volume_l,1)} L</strong>Target ${num(w.target_volume_l,1)} L</div><div class="summary-box">QC<strong>pH ${w.qc.ph||'-'}</strong>Brix ${w.qc.brix||'-'} °Bx</div><div class="summary-box">Output<strong>${w.filling.good_bottles||0}</strong>${money(costPerBottle())} / bottle</div></div><div class="summary-section panel" style="box-shadow:none"><b>สิ่งที่จะถูกบันทึก</b><p style="margin-top:6px">Formula Version • Ingredient Actual • Extraction Yield • QC • Filling • Cost • Shelf-life Day 0/3/5/7</p></div><div class="callout success">เมื่อ Finish แล้ว Batch จะขึ้นบน Dashboard ทันที</div>`}
+function variance(actual,target){return target?((Number(actual)-Number(target))/Number(target)*100).toFixed(1):'0.0'}
+function yieldOf(e){return Number(e.raw_input_kg)>0?num(Number(e.juice_output_l)/Number(e.raw_input_kg)*100,1):'0.0'}
+function avgYield(){const xs=state.wizard.extractions.filter(e=>Number(e.raw_input_kg)>0).map(e=>Number(e.juice_output_l)/Number(e.raw_input_kg)*100);return xs.length?xs.reduce((a,b)=>a+b,0)/xs.length:0}
+function totalCost(){const c=state.wizard.cost;return Number(c.raw_material_cost||0)+Number(c.packaging_cost||0)+Number(c.utilities_cost||0)}
+function costPerBottle(){const n=Number(state.wizard.filling.good_bottles||0);return n?totalCost()/n:0}
+function rejectRate(){const f=state.wizard.filling;const t=Number(f.good_bottles||0)+Number(f.reject_bottles||0);return t?num(Number(f.reject_bottles||0)/t*100,1):'0.0'}
+function bindWizardFields(){
+  $('#wFormula')?.addEventListener('change',e=>{state.wizard.formula_id=Number(e.target.value)||null;hydrateIngredients(true);persistWizard()});
+  $('#wTargetVolume')?.addEventListener('input',e=>{state.wizard.target_volume_l=Number(e.target.value);hydrateIngredients(true);persistWizard()});
+  $$('.w-ing-actual').forEach(el=>el.addEventListener('input',e=>{const i=Number(e.target.dataset.i);state.wizard.ingredients[i].actual_qty=Number(e.target.value);$(`#var-${i}`).textContent=variance(e.target.value,state.wizard.ingredients[i].target_qty)+'%';persistWizard()}));
+  $$('.ex-name').forEach(x=>x.addEventListener('input',e=>{state.wizard.extractions[Number(e.target.dataset.i)].ingredient_name=e.target.value;persistWizard()}));
+  $$('.ex-raw').forEach(x=>x.addEventListener('input',e=>{state.wizard.extractions[Number(e.target.dataset.i)].raw_input_kg=Number(e.target.value);persistWizard()}));
+  $$('.ex-juice').forEach(x=>x.addEventListener('input',e=>{state.wizard.extractions[Number(e.target.dataset.i)].juice_output_l=e.target.value===''?'':Number(e.target.value);persistWizard()}));
+  [['#wActualVolume','actual_volume_l'],['#wNotes','notes']].forEach(([s,k])=>$(s)?.addEventListener('input',e=>{state.wizard[k]=k==='actual_volume_l'?Number(e.target.value):e.target.value;persistWizard()}));
+  [['#wPh','ph'],['#wBrix','brix'],['#wTemp','temperature_c'],['#w-appearance','appearance'],['#w-odor','odor'],['#w-taste','taste'],['#w-separation','separation']].forEach(([s,k])=>$(s)?.addEventListener('input',e=>{state.wizard.qc[k]=['ph','brix','temperature_c'].includes(k)?(e.target.value===''?'':Number(e.target.value)):e.target.value;persistWizard()}));
+  [['#wBottleSize','bottle_size_ml'],['#wGood','good_bottles'],['#wReject','reject_bottles']].forEach(([s,k])=>$(s)?.addEventListener('input',e=>{state.wizard.filling[k]=Number(e.target.value);persistWizard()}));
+  [['#wRawCost','raw_material_cost'],['#wPkgCost','packaging_cost'],['#wUtilCost','utilities_cost']].forEach(([s,k])=>$(s)?.addEventListener('input',e=>{state.wizard.cost[k]=Number(e.target.value);persistWizard()}));
+}
+function hydrateIngredients(force=false){const f=state.formulas.find(x=>x.id===Number(state.wizard.formula_id));if(!f)return;if(state.wizard.ingredients.length&&!force)return;const scale=Number(state.wizard.target_volume_l||f.target_volume_l)/Number(f.target_volume_l);state.wizard.ingredients=f.ingredients.map(i=>({name:i.name,target_qty:Number(i.target_qty)*scale,actual_qty:Number(i.target_qty)*scale,unit:i.unit}));if(!state.wizard.extractions.length)state.wizard.extractions=[{ingredient_name:'Ginger',raw_input_kg:'',juice_output_l:''}];}
+function addExtraction(){state.wizard.extractions.push({ingredient_name:'',raw_input_kg:'',juice_output_l:''});persistWizard();renderWizard()}
+function removeExtraction(i){state.wizard.extractions.splice(i,1);persistWizard();renderWizard()}
+async function wizardNext(){
+  if(state.wizardStep===0 && !state.wizard.formula_id){toast('กรุณาเลือก Formula');return}
+  if(state.wizardStep===1){try{const body={formula_id:state.wizard.formula_id,target_volume_l:state.wizard.target_volume_l,ingredients:state.wizard.ingredients};if(!state.wizard.batch_id){const r=await api('/api/batches',{method:'POST',body});state.wizard.batch_id=r.id;toast(`สร้าง ${r.batch.code}`);}else await api(`/api/batches/${state.wizard.batch_id}`,{method:'PATCH',body});}catch(e){toast(e.message);return}}
+  if(state.wizardStep<7){state.wizardStep++;renderWizard();return}
+  try{await api(`/api/batches/${state.wizard.batch_id}/complete`,{method:'POST',body:{actual_volume_l:state.wizard.actual_volume_l,extractions:state.wizard.extractions,qc:state.wizard.qc,filling:state.wizard.filling,cost:state.wizard.cost}});toast('Batch completed ✓');localStorage.removeItem('healthshot-wizard');localStorage.removeItem('healthshot-wizard-step');state.wizard=null;state.wizardStep=0;setView('dashboard');}catch(e){toast(e.message)}
+}
+function wizardBack(){if(state.wizardStep>0){state.wizardStep--;renderWizard()}}
+
+function backupData(){const blob=new Blob([JSON.stringify(portableLoad(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`health-shot-lab-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);a.remove();toast('ดาวน์โหลด Backup JSON แล้ว')}
+
+function init(){
+  $('#todayLabel').textContent=new Intl.DateTimeFormat('th-TH',{dateStyle:'medium'}).format(new Date());
+  $$('.nav-item').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+  $$('[data-view-jump]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.viewJump)));
+  $('#newFormulaBtn').addEventListener('click',showFormulaEditor);
+  $('#wizardNext').addEventListener('click',wizardNext);$('#wizardBack').addEventListener('click',wizardBack);$('#wizardSave').addEventListener('click',()=>{persistWizard();toast('บันทึก Draft ในเครื่องแล้ว')});
+  $('#batchSearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase();renderBatchTable(state.batches.filter(b=>(b.code+' '+(b.formula_name||'')+' '+(b.formula_version||'')).toLowerCase().includes(q)))});
+  $('#backupBtn').addEventListener('click',backupData);
+  loadDashboard();
+}
+window.setView=setView;window.addFormulaIngredient=addFormulaIngredient;window.saveFormula=saveFormula;window.addExtraction=addExtraction;window.removeExtraction=removeExtraction;window.saveShelf=saveShelf;window.$=$;
+init();
+
+</script>
+</body>
+</html>
